@@ -1,9 +1,11 @@
 package blackwhirlwind.game.gameshell
 
+import blackwhirlwind.game.gameshell.gateway.GatewayService
 import cats.effect.Async
 import cats.syntax.all.*
 import com.comcast.ip4s.*
 import fs2.io.net.Network
+import grpc.gateway.GatewayAPI
 import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.implicits.*
@@ -23,7 +25,8 @@ object GameShellServer:
       // in the underlying routes.
       httpApp = (
         GameShellRoutes.helloWorldRoutes[F](helloWorldAlg) <+>
-          GameShellRoutes.jokeRoutes[F](jokeAlg)
+          GameShellRoutes.jokeRoutes[F](jokeAlg) <+>
+          GatewayAPI.toRoutes[F](GatewayService.make[F])
       ).orNotFound
 
       // With Middlewares in place
@@ -35,6 +38,7 @@ object GameShellServer:
           .withHost(ipv4"0.0.0.0")
           .withPort(port"8080")
           .withHttpApp(finalHttpApp)
+          .withHttp2
           .build
     } yield ()
   }.useForever
