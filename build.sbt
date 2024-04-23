@@ -28,7 +28,7 @@ val DisciplineVersion      = "1.6.0"
 val MunitDisciplineVersion = "2.0.0-M2"
 
 lazy val root = (project in file("."))
-  .enablePlugins(Http4sGrpcPlugin, JavaAppPackaging)
+  .enablePlugins(Http4sGrpcPlugin, JavaAppPackaging, AshScriptPlugin)
   .settings(
     organization        := "blackwhirlwind.game",
     name                := "gameshell",
