@@ -37,7 +37,7 @@ lazy val root = (project in file("."))
     scalaVersion        := scala3Version,
     Compile / mainClass := Some("blackwhirlwind.game.gameshell.Main"),
     dockerExposedPorts ++= Seq(8558, 8080),
-    dockerBaseImage := "docker.io/library/eclipse-temurin:17-jre-alpine",
+    dockerBaseImage := "docker.io/library/eclipse-temurin:21-jre-alpine",
     libraryDependencies ++= Seq(
       // cats
       "org.typelevel" %% "cats-core" % CatsVersion,
