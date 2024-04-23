@@ -1,3 +1,4 @@
+import org.typelevel.scalacoptions.ScalacOptions
 import sbt.Keys.libraryDependencies
 
 val scala3Version = "3.4.1"
@@ -27,7 +28,7 @@ val DisciplineVersion      = "1.6.0"
 val MunitDisciplineVersion = "2.0.0-M2"
 
 lazy val root = (project in file("."))
-  .enablePlugins(Http4sGrpcPlugin)
+  .enablePlugins(Http4sGrpcPlugin, JavaAppPackaging)
   .settings(
     organization        := "blackwhirlwind.game",
     name                := "gameshell",
@@ -35,6 +36,8 @@ lazy val root = (project in file("."))
     fork                := true,
     scalaVersion        := scala3Version,
     Compile / mainClass := Some("blackwhirlwind.game.gameshell.Main"),
+    dockerExposedPorts ++= Seq(8558, 8080),
+    dockerBaseImage := "docker.io/library/eclipse-temurin:17-jre-alpine",
     libraryDependencies ++= Seq(
       // cats
       "org.typelevel" %% "cats-core" % CatsVersion,
@@ -109,10 +112,11 @@ lazy val root = (project in file("."))
     assembly / assemblyMergeStrategy := {
       case "module-info.class" => MergeStrategy.discard
       case x                   => (assembly / assemblyMergeStrategy).value.apply(x)
-    }
+    },
+    Compile / PB.targets ++= Seq(
+      // set grpc = false because http4s-grpc generates its own code
+      scalapb.gen(grpc = false, scala3Sources = true) -> (Compile / sourceManaged).value / "scalapb"
+    ),
+    // grpc plugin will generate discard value warnings
+    Compile / tpolecatExcludeOptions += ScalacOptions.fatalWarnings
   )
-
-Compile / PB.targets ++= Seq(
-  // set grpc = false because http4s-grpc generates its own code
-  scalapb.gen(grpc = false, scala3Sources = true) -> (Compile / sourceManaged).value / "scalapb"
-)
