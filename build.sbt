@@ -6,8 +6,8 @@ val scala3Version = "3.4.1"
 val CatsVersion       = "2.10.0"
 val CatsEffectVersion = "3.2.9"
 val Fs2Version        = "3.10.2"
-val Http4sVersion     = "0.23.26"
-val CirceVersion      = "0.14.6"
+val Http4sVersion     = "0.23.27"
+val CirceVersion      = "0.14.7"
 val ScodecVersion     = "2.2.2"
 
 val Log4catsVersion        = "2.6.0"
@@ -24,7 +24,7 @@ val EdomataVersion              = "0.12.1"
 val Http4sSessionVersion = "0.2.0"
 val Http4sArmeriaVersion = "0.5.3"
 
-val DisciplineVersion      = "1.6.0"
+val DisciplineVersion      = "1.7.0"
 val MunitDisciplineVersion = "2.0.0-M2"
 
 lazy val root = (project in file("."))
@@ -38,6 +38,7 @@ lazy val root = (project in file("."))
     Compile / mainClass := Some("blackwhirlwind.game.gameshell.Main"),
     dockerExposedPorts ++= Seq(8558, 8080),
     dockerBaseImage := "docker.io/library/eclipse-temurin:21-jre-alpine",
+//    resolvers ++= Resolver.sonatypeOssRepos("releases") ++ Resolver.sonatypeOssRepos("snapshots"),
     libraryDependencies ++= Seq(
       // cats
       "org.typelevel" %% "cats-core" % CatsVersion,
@@ -56,8 +57,10 @@ lazy val root = (project in file("."))
       "org.http4s" %% "http4s-circe"        % Http4sVersion,
       "org.http4s" %% "http4s-dsl"          % Http4sVersion,
 
-      // Optional for auto-derivation of JSON codecs
+      // JSON
+      "io.circe" %% "circe-core"    % CirceVersion,
       "io.circe" %% "circe-generic" % CirceVersion,
+      "io.circe" %% "circe-parser"  % CirceVersion,
       // Optional for string interpolation to JSON model
       "io.circe" %% "circe-literal" % CirceVersion,
 
@@ -66,11 +69,6 @@ lazy val root = (project in file("."))
 
       // http4s 3rd party
       "org.http4s" %% "http4s-session" % Http4sSessionVersion,
-      // armeria
-      // For server
-      "org.http4s" %% "http4s-armeria-server" % Http4sArmeriaVersion,
-      // For client
-      "org.http4s" %% "http4s-armeria-client" % Http4sArmeriaVersion,
 
       // endless4s
       "io.github.endless4s" %% "endless-core"             % Endless4sVersion,
@@ -103,6 +101,23 @@ lazy val root = (project in file("."))
 
       // law enforcement
       "org.typelevel" %% "discipline-core" % DisciplineVersion,
+
+      // generics
+      "org.typelevel" %% "shapeless3-deriving" % "3.4.0",
+      "org.typelevel" %% "kittens"             % "3.3.0",
+
+      // newtypes
+      "io.monix" %% "newtypes-core"        % "0.2.3",
+      "io.monix" %% "newtypes-circe-v0-14" % "0.2.3",
+
+      // refine type
+      "io.github.iltotore" %% "iron"       % "2.5.0",
+      "io.github.iltotore" %% "iron-cats"  % "2.5.0",
+      "io.github.iltotore" %% "iron-circe" % "2.5.0",
+      "io.github.iltotore" %% "iron-skunk" % "2.5.0",
+
+      // lens
+      "dev.optics" %% "monocle-core" % "3.2.0",
 
       // Test
       "org.scalameta"  %% "munit"               % MunitVersion           % Test,
